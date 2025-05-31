@@ -4,8 +4,17 @@ import bcrypt from "bcrypt";
 
 
  export const addUser = async(req,res)=>{
+ 
 
-    const {username,email,address,password} = req.body;
+//    const [firstUser] = req.body;
+//    console.log(firstUser);
+   
+     const { username, email, password, address  } = req.body;
+
+     console.log(username); // kundan
+
+    
+    
 
     try {
         
@@ -38,7 +47,7 @@ export const addStore = async(req,res)=>{
     try {
          try {
         
-        if(!storename || !email || !address || !rating){
+        if(!storename || !email || !address){
            return res.status(400).json({error:"all the fields are required"});
         }
 
@@ -67,6 +76,9 @@ export const addStore = async(req,res)=>{
 
     const {admin_name,email,address,password} = req.body;
 
+    console.log(req.body);
+    
+
     try {
         
         if(!admin_name || !email || !address || !password){
@@ -75,7 +87,7 @@ export const addStore = async(req,res)=>{
 
        const [existing] = await pool.query("SELECT * FROM admin WHERE email = ?", [email]);
        if (existing.length > 0) {
-       return res.status(409).json({ message: "user already exists." });
+       return res.status(409).json({ message: "admin already exists." });
        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -107,6 +119,17 @@ export const getallusers = async(req,res)=>{
 export const getallstores = async(req,res)=>{
     try {
         const [existing] = await pool.query("SELECT * FROM store");
+        return res.status(200).json(existing);
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+export const getadmin = async(req,res)=>{
+   try {
+        const [existing] = await pool.query("SELECT * FROM admin");
         return res.status(200).json(existing);
         
     } catch (error) {
