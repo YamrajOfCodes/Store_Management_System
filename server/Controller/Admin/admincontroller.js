@@ -1,5 +1,7 @@
 import pool from "../../Db/dbConnect.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+const ADMINSECRET="dhsjdh879";
 
 import createTables from "../../Models/Schemas/alltableSchema.js";
 
@@ -10,7 +12,7 @@ import createTables from "../../Models/Schemas/alltableSchema.js";
  
      const { username, email, password, address, role  } = req.body;
 
-     console.log(username); // kundan
+    //  console.log(username); // kundan
 
 
     try {
@@ -21,7 +23,7 @@ import createTables from "../../Models/Schemas/alltableSchema.js";
 
        const [existing] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
        if (existing.length > 0) {
-       return res.status(409).json({ message: "user already exists." });
+       return res.status(409).json({ error: "user already exists." });
        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,7 +31,7 @@ import createTables from "../../Models/Schemas/alltableSchema.js";
   
        await pool.query("INSERT INTO users (username, email, password,address,role) VALUES (?, ?,?,?,?)", [username,email,hashedPassword,address,role]);
 
-        return res.status(201).json({ message: " user created successfully." });
+        return res.status(200).json({ message: " user created successfully." });
 
         
     } catch (error) {
@@ -84,7 +86,7 @@ export const addStore = async(req,res)=>{
 
        const [existing] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
        if (existing.length > 0) {
-       return res.status(409).json({ message: "admin already exists." });
+       return res.status(409).json({ error: "admin already exists." });
        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -99,6 +101,51 @@ export const addStore = async(req,res)=>{
         console.log(error);
         
     }
+}
+
+
+export const adminLogin = async(req,res)=>{
+ const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  try {
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email ' });
+    }
+
+    const user = rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    // Generate JWT Token (example secret: "your_jwt_secret")
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      ADMINSECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
 export const getallusers = async(req,res)=>{

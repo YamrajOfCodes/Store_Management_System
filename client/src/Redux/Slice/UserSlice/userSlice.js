@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import { addAdminAPI, addstoreAPI, getAdminAPI, getallstoresAPI, getallusersAPI, registerAPI } from "../../../API/adminAPI/userAPI";
+import { addAdminAPI, addstoreAPI, getAdminAPI, getallstoresAPI, getallusersAPI, registerAPI, universalLoginAPI } from "../../../API/adminAPI/userAPI";
 import {toast} from "react-toastify"
 
 
@@ -100,6 +100,22 @@ export const getAdmin = createAsyncThunk("getadmin",async()=>{
     }
 })
 
+export const Login = createAsyncThunk("login",async(data)=>{
+    try {
+        const response = await universalLoginAPI(data);
+        
+        if(response.status==200){
+            localStorage.setItem("adminToken", response.data.token)
+            return response.data;
+        }else{
+           return response.data
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+})
+
 
 
 
@@ -115,6 +131,7 @@ export const getAdmin = createAsyncThunk("getadmin",async()=>{
         getadmin:[],
         getallusers:[],
         getallstores:[],
+        login:[],
         loader:false,
         error:null,
     },
@@ -192,6 +209,20 @@ export const getAdmin = createAsyncThunk("getadmin",async()=>{
         .addCase(getallStores.rejected,(state,action)=>{
             state.error = [action.payload]
         })
+
+        // Login 
+
+          builder.addCase(Login.pending,(state,action)=>{
+            state.loader = true
+        })
+        .addCase(Login.fulfilled,(state,action)=>{
+            state.loader = false,
+            state.login = [action.payload]
+        })
+        .addCase(Login.rejected,(state,action)=>{
+            state.error = [action.payload]
+        })
+
 
 
 

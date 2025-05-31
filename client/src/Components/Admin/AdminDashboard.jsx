@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Store, Star, Plus, Edit, Trash2, Menu, X, UserCheck, Building } from 'lucide-react';
+import { Users, Store, Star, Plus, Edit, Trash2, Menu, X, UserCheck, Building, icons, DoorOpenIcon, LogOut } from 'lucide-react';
 import DataTable from './DataTable';
 import UserForm from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAdmin, getallStores, getallUsers } from '../../Redux/Slice/UserSlice/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -11,6 +13,7 @@ const AdminDashboard = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { getallusers } = useSelector((state) => state.user);
   const { getallstores } = useSelector((state) => state.user);
@@ -57,7 +60,13 @@ admins = getadmin?.[0]
   }));
 
 
-
+ const handleLogout = ()=>{
+  localStorage.removeItem("adminToken")
+  setTimeout(() => {
+    toast.success("logout successfully");
+     navigate("/")
+  }, 1000);
+ }
 
 
  useEffect(() => {
@@ -81,7 +90,8 @@ admins = getadmin?.[0]
     { id: 'dashboard', label: 'Dashboard', icon: Users },
     { id: 'users', label: 'Users', icon: Users },
     { id: 'stores', label: 'Stores', icon: Store },
-    { id: 'admins', label: 'Admins', icon: UserCheck }
+    { id: 'admins', label: 'Admins', icon: UserCheck },
+    { id: 'Logout', label:'Logout',icon:LogOut}
   ];
 
   const StatCard = ({ title, value, icon: Icon, color }) => (
@@ -128,8 +138,8 @@ admins = getadmin?.[0]
                 className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors ${activeTab === item.id ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : 'text-gray-700'
                   }`}
               >
-                <Icon className="h-5 w-5 mr-3" />
-                {item.label}
+                <Icon className="h-5 w-5 mr-3"  />
+                <button onClick={item.label == "Logout" && handleLogout}>{item.label}</button>
               </button>
             );
           })}

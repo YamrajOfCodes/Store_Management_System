@@ -2,16 +2,20 @@ import { commonrequest } from "../commonrequest"
 import {BASE_URL} from "../helper"
 
 export const registerAPI = async(data,header)=>{
-    return await commonrequest("POST",`${BASE_URL}/admin/api/adduser`,data,header,"user");
+    return await commonrequest("POST",`${BASE_URL}/admin/api/adduser`,data,header,"admin");
 }
 
 export const addstoreAPI = async(data,header)=>{  
-    return await commonrequest("POST",`${BASE_URL}/admin/api/addstore`,data,header,"user");
+    return await commonrequest("POST",`${BASE_URL}/admin/api/addstore`,data,header,"admin");
 }
 
 
 export const addAdminAPI = async(data,header)=>{  
-    return await commonrequest("POST",`${BASE_URL}/admin/api/addadmin`,data,header,"user");
+    return await commonrequest("POST",`${BASE_URL}/admin/api/addadmin`,data,header,"admin");
+}
+
+export const universalLoginAPI = async(data,header)=>{
+     return await commonrequest("POST",`${BASE_URL}/admin/api/adminlogin`,data,header,"user");
 }
 
 
