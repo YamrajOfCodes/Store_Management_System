@@ -36,6 +36,19 @@ const createTables = async () => {
     //   )
     // `);
 
+    await pool.query(`
+    CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL ,
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255) ,
+    address VARCHAR(200),
+    role VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);     
+ `);
+
     console.log("✅ Tables created successfully.");
     process.exit(0);
   } catch (err) {

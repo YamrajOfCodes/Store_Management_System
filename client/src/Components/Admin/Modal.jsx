@@ -3,6 +3,9 @@ import { X } from 'lucide-react';
 import { addAdmin, addStore, Register } from '../../Redux/Slice/UserSlice/userSlice';
 import { useDispatch } from 'react-redux';
 
+
+
+
 export default function UserForm({ onClose, title }) {
   const dispatch = useDispatch();
 
@@ -10,7 +13,8 @@ export default function UserForm({ onClose, title }) {
     username: '',
     email: '',
     password: '',
-    address: ''
+    address: '',
+    role: 'user'
   });
 
   const [storeData, setStoreData] = useState({
@@ -24,7 +28,7 @@ export default function UserForm({ onClose, title }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (title === "User" || title === "Admin") {
       setFormData(prev => ({
         ...prev,
@@ -36,7 +40,7 @@ export default function UserForm({ onClose, title }) {
         [name]: value
       }));
     }
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -44,6 +48,12 @@ export default function UserForm({ onClose, title }) {
         [name]: ''
       }));
     }
+  };
+
+
+  
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   // Validate form based on title
@@ -54,7 +64,7 @@ export default function UserForm({ onClose, title }) {
       if (!formData.username.trim()) {
         newErrors.name = 'Name is required';
       }
-      
+
       if (!formData.email.trim()) {
         newErrors.email = 'Email is required';
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -66,7 +76,7 @@ export default function UserForm({ onClose, title }) {
       } else if (formData.password.length < 6) {
         newErrors.password = 'Password must be at least 6 characters';
       }
-      
+
       if (!formData.address.trim()) {
         newErrors.address = 'Address is required';
       }
@@ -74,24 +84,24 @@ export default function UserForm({ onClose, title }) {
       if (!storeData.storename.trim()) {
         newErrors.name = 'Store name is required';
       }
-      
+
       if (!storeData.email.trim()) {
         newErrors.email = 'Email is required';
       } else if (!/\S+@\S+\.\S+/.test(storeData.email)) {
         newErrors.email = 'Email is invalid';
       }
-      
+
       if (!storeData.address.trim()) {
         newErrors.address = 'Address is required';
       }
     }
-    
+
     return newErrors;
   };
 
   const handleSubmit = () => {
     const newErrors = validateForm();
-    
+
     if (Object.keys(newErrors).length === 0) {
       try {
         if (title === "User") {
@@ -101,13 +111,7 @@ export default function UserForm({ onClose, title }) {
           dispatch(addStore(storeData));
           alert('Store added successfully!');
         } else if (title === "Admin") {
-          let data ={
-            admin_name:formData?.username,
-            email:formData?.email,
-            password:formData?.password,
-            address:formData?.address
-          }
-          dispatch(addAdmin(data));
+          dispatch(addAdmin(formData));
           alert('Admin added successfully!');
         }
         onClose();
@@ -154,7 +158,7 @@ export default function UserForm({ onClose, title }) {
                 <X />
               </button>
             </div>
-            
+
             <div className="space-y-6">
               {/* Name Field */}
               <div className="space-y-2">
@@ -167,9 +171,8 @@ export default function UserForm({ onClose, title }) {
                   name={title === "Store" ? "storename" : "username"}
                   value={currentValues.name}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                    errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   placeholder={title === "Store" ? 'Enter store name' : 'Enter full name'}
                 />
                 {errors.name && (
@@ -191,9 +194,8 @@ export default function UserForm({ onClose, title }) {
                   name="email"
                   value={currentValues.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   placeholder="Enter email address"
                 />
                 {errors.email && (
@@ -217,9 +219,8 @@ export default function UserForm({ onClose, title }) {
                       name="password"
                       value={currentValues.password}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${
-                        errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                        }`}
                       placeholder="Enter password"
                     />
                     <button
@@ -239,6 +240,19 @@ export default function UserForm({ onClose, title }) {
                 </div>
               )}
 
+              {(title === "User" || title === "Admin") && (
+                <select
+                  name="role"
+                  className="w-full border rounded px-3 py-2"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="user">User</option>
+                  <option value="shopOwner">Shop Owner</option>
+                  <option value="admin">Admin</option>
+                </select>
+              )}
+
               {/* Address Field */}
               <div className="space-y-2">
                 <label htmlFor="address" className="block text-sm font-semibold text-gray-700">
@@ -250,9 +264,8 @@ export default function UserForm({ onClose, title }) {
                   value={currentValues.address}
                   onChange={handleInputChange}
                   rows={3}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${
-                    errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   placeholder="Enter full address"
                 />
                 {errors.address && (

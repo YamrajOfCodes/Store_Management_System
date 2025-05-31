@@ -12,63 +12,59 @@ const AdminDashboard = () => {
   const [modalType, setModalType] = useState('');
   const dispatch = useDispatch();
 
-  const {getallusers} = useSelector((state)=>state.user);
-  const {getallstores} = useSelector((state)=>state.user);
-  const {getadmin} = useSelector((state)=>state.user);
+  const { getallusers } = useSelector((state) => state.user);
+  const { getallstores } = useSelector((state) => state.user);
+  const { getadmin } = useSelector((state) => state.user);
 
 
-  const {register} = useSelector((state)=>state.user);
-  const {addstore} = useSelector((state)=>state.user)
+  const { register } = useSelector((state) => state.user);
+  const { addstore } = useSelector((state) => state.user)
   // console.log(getadmin);
   // console.log(getallstores);
 
 
-  let users=[];
-  let stores=[];
-  let admins=[];
+  let users = [];
+  let stores = [];
+  let admins = [];
 
-  users = getallusers?.[0]?.map((element)=>{
-      return {
-        id:element?.id,
-        name:element?.username,
-        email:element?.email,
-        role:element?.role,
-        address:element?.address
-      }
+ 
+users = getallusers?.[0]
+  ?.filter((element) => element.role === "user")
+  ?.map((element) => ({
+    id: element?.id,
+    name: element?.username,
+    email: element?.email,
+    address: element?.address,
+  }));
+
+
+  stores = getallstores?.[0]?.map((element) => {
+    return {
+      id: element?.id,
+      name: element?.storename,
+      email: element?.email,
+      address: element?.address,
+    }
   })
 
-    stores = getallstores?.[0]?.map((element)=>{
-      return {
-        id:element?.id,
-        name:element?.storename,
-        email:element?.email,
-        address:element?.address,
-      }
-  })
-
-      admins = getadmin?.[0]?.map((element)=>{
-      return {
-        id:element?.id,
-        name:element?.admin_name,
-        email:element?.email,
-        address:element?.address,
-      }
-  })
+admins = getadmin?.[0]
+  ?.filter((element) => element.role === "admin")
+  ?.map((element) => ({
+    id: element?.id,
+    name: element?.username,
+    email: element?.email,
+    address: element?.address,
+  }));
 
 
-  
 
 
-  useEffect(()=>{
-    dispatch(getallUsers());
-    dispatch(getallStores());
-    dispatch(getAdmin());
-  },[])
 
-  useEffect(()=>{
-     dispatch(getallUsers());
-    dispatch(getallStores());
-  },[register,addstore]);
+ useEffect(() => {
+  dispatch(getallUsers());
+  dispatch(getallStores());
+  dispatch(getAdmin());
+}, [register, addstore]);
 
 
 
@@ -79,7 +75,7 @@ const AdminDashboard = () => {
     setShowAddModal(true);
   };
 
- 
+
 
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Users },
@@ -129,9 +125,8 @@ const AdminDashboard = () => {
                   setActiveTab(item.id);
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors ${
-                  activeTab === item.id ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : 'text-gray-700'
-                }`}
+                className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors ${activeTab === item.id ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : 'text-gray-700'
+                  }`}
               >
                 <Icon className="h-5 w-5 mr-3" />
                 {item.label}
@@ -166,13 +161,13 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
                   title="Total Users"
-                  value={users?.length}
+                  value={users?.length || 0}
                   icon={Users}
                   color="#3B82F6"
                 />
                 <StatCard
                   title="Total Stores"
-                  value={stores?.length}
+                  value={stores?.length || 0}
                   icon={Store}
                   color="#10B981"
                 />
@@ -182,6 +177,7 @@ const AdminDashboard = () => {
                   icon={Star}
                   color="#F59E0B"
                 />
+
               </div>
 
               {/* Quick Actions */}
