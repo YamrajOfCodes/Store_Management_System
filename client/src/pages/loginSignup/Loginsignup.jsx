@@ -46,8 +46,10 @@ export default function AuthPage() {
                     toast.success("Login successful");
                     if (role === 'admin') {
                         navigate('/dashboard');
-                    } else {
+                    } else if(role === "user") {
                         navigate('/store');
+                    } else{
+                        navigate("/storedashboard")
                     }
                 } else {
                     toast.error("Login failed");

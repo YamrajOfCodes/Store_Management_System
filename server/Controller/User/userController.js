@@ -1,5 +1,5 @@
 import db from "../../Db/dbConnect.js";
-
+import bcrypt from "bcrypt"
 
 
 export const userverify = async(req,res)=>{
@@ -96,3 +96,77 @@ export const getReview = async (req, res) => {
     return res.status(500).json({ error: "Database error" });
   }
 };
+
+export const getStore = async(req,res)=>{
+ 
+
+  const {email} = req.body;
+ 
+
+  if(!email){
+    return res.status(400).json({error:"email is required"});
+  }
+
+  try {
+      const [store] = await db.query(
+      "SELECT * FROM stores WHERE email = ?",
+      [email]
+    );
+
+    if(store){
+      return res.status(200).json(store)
+    }
+  
+    return res.status(400).json({error:"Store are not present"});
+
+  } catch (error) {
+    console.log("error while fetching store details");
+    
+  }
+
+
+}
+
+export const getallReviews = async(req,res)=>{
+  try {
+     const [store] = await db.query(
+      "SELECT * FROM  store_reviews"
+    );
+    return res.status(200).json(store);
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+export const changePassword = async(req,res)=>{
+   const { userId, oldPassword, newPassword } = req.body;
+
+  try {
+    // 1. Fetch user from DB
+    const [rows] = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const hashedPassword = rows[0].password;
+
+    // 2. Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, hashedPassword);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Old password is incorrect' });
+    }
+
+    // 3. Hash new password
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // 4. Update password in DB
+    await db.query('UPDATE users SET password = ? WHERE id = ?', [newHashedPassword, userId]);
+
+   return res.json({ message: 'Password changed successfully' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}

@@ -20,13 +20,15 @@ const StorePage = () => {
   const {addreview} = useSelector((state)=>state.user2);
   const navigate = useNavigate();
 
+  
   console.log(getreview?.[0]?.data);
   console.log(userverify?.[0]?.[0]?.id);
-
+  
   let id = userverify?.[0]?.[0]?.id
   console.log("id",id);
-
+  
   let stores=[];
+
 
   useEffect(()=>{
     dispatch(getallStores());

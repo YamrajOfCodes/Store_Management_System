@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {toast} from "react-toastify"
-import { addreviewAPI, getReviewAPI, userVerifyAPI } from "../../../API/userAPI/userAPI";
+import { addreviewAPI, changePasswordAPI, getallreviewsAPI, getReviewAPI, getStoreAPI, userVerifyAPI } from "../../../API/userAPI/userAPI";
 
 
 
@@ -58,6 +58,63 @@ export const getReview = createAsyncThunk("getreview",async()=>{
 })
 
 
+export const getStore = createAsyncThunk("getstore",async(data)=>{
+    try {
+       
+        
+        const response = await getStoreAPI(data);
+        if(response.status == 200){
+            return response.data;
+        }else{
+            toast.error(response.response.data.error);
+            
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+})
+
+
+
+export const getAllReviews = createAsyncThunk("getallreviews",async()=>{
+    try {
+       
+        const response = await getallreviewsAPI();
+        if(response.status == 200){
+            return response.data;
+        }else{
+            toast.error(response.response.data.error);
+            
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+})
+export const ChangePassword = createAsyncThunk("changepassword",async(data)=>{
+    try {
+       
+        
+        const response = await changePasswordAPI(data);
+        if(response.status == 200){
+            toast.success("password change successfully");
+            return response.data;
+        }else{
+            toast.error(response.response.data.error);
+            
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+})
+
+
+
+
+
+
 
 
 
@@ -71,6 +128,9 @@ export const getReview = createAsyncThunk("getreview",async()=>{
         getreview:[],
         userverify:[],
         getreview:[],
+        getstore:[],
+        getallreviews:[],
+        changepassword:[],
         loader:false,
         error:null,
     },
@@ -109,6 +169,49 @@ export const getReview = createAsyncThunk("getreview",async()=>{
         .addCase(getReview.rejected,(state,action)=>{
             state.error = [action.payload]
         })
+
+
+        //getStore
+
+        
+        builder.addCase(getStore.pending,(state,action)=>{
+            state.loader = true
+        })
+        .addCase(getStore.fulfilled,(state,action)=>{
+            state.loader = false,
+            state.getstore = [action.payload]
+        })
+        .addCase(getStore.rejected,(state,action)=>{
+            state.error = [action.payload]
+        })
+
+
+    // getallreviews
+
+       builder.addCase(getAllReviews.pending,(state,action)=>{
+            state.loader = true
+        })
+        .addCase(getAllReviews.fulfilled,(state,action)=>{
+            state.loader = false,
+            state.getallreviews = [action.payload]
+        })
+        .addCase(getAllReviews.rejected,(state,action)=>{
+            state.error = [action.payload]
+        })
+
+
+         builder.addCase(ChangePassword.pending,(state,action)=>{
+            state.loader = true
+        })
+        .addCase(ChangePassword.fulfilled,(state,action)=>{
+            state.loader = false,
+            state.changepassword = [action.payload]
+        })
+        .addCase(ChangePassword.rejected,(state,action)=>{
+            state.error = [action.payload]
+        })
+
+
 
 
 

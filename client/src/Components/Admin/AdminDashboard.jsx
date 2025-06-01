@@ -49,14 +49,14 @@ const AdminDashboard = () => {
   // })
 
    users = getallusers?.[0]?.filter((element) => {
-      return element.role == "user"
+      return element.role == "user" || element.role == "shopOwner"
   }).map((element)=>{
      return {
       id: element?.id,
       name: element?.username,
       email: element?.email,
-      address:element?.address,
       role: element?.role,
+      address:element?.address,
     }
   })
 
