@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const ADMINSECRET="dhsjdh879";
 
-import createTables from "../../Models/Schemas/alltableSchema.js";
+// import createTables from "../../Models/Schemas/alltableSchema.js";
 
 // createTables();
 
@@ -50,12 +50,12 @@ export const addStore = async(req,res)=>{
            return res.status(400).json({error:"all the fields are required"});
         }
 
-       const [existing] = await pool.query("SELECT * FROM store WHERE email = ?", [email]);
+       const [existing] = await pool.query("SELECT * FROM stores WHERE email = ?", [email]);
        if (existing.length > 0) {
        return res.status(409).json({ message: "store is already exists." });
        }
   
-       await pool.query("INSERT INTO store (storename, email,address,rating,rating_counter) VALUES (?, ?,?,?,?)", [storename,email,address,rating,"0"]);
+       await pool.query("INSERT INTO stores (storename, email,address,rating,total_reviews) VALUES (?, ?,?,?,?)", [storename,email,address,rating,"0"]);
 
         return res.status(201).json({ message: "Store created successfully." });
 
@@ -162,7 +162,7 @@ export const getallusers = async(req,res)=>{
 
 export const getallstores = async(req,res)=>{
     try {
-        const [existing] = await pool.query("SELECT * FROM store");
+        const [existing] = await pool.query("SELECT * FROM stores");
         return res.status(200).json(existing);
         
     } catch (error) {

@@ -3,9 +3,10 @@ import { Users, Store, Star, Plus, Edit, Trash2, Menu, X, UserCheck, Building, i
 import DataTable from './DataTable';
 import UserForm from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAdmin, getallStores, getallUsers } from '../../Redux/Slice/UserSlice/userSlice';
+import { getAdmin, getallStores, getallUsers } from '../../Redux/Slice/AdminSlice/adminSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import FilterableTable from './FilterTable';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -22,23 +23,43 @@ const AdminDashboard = () => {
 
   const { register } = useSelector((state) => state.user);
   const { addstore } = useSelector((state) => state.user)
-  // console.log(getadmin);
-  // console.log(getallstores);
+  console.log(getadmin);
+  console.log(getallstores);
 
 
   let users = [];
+  // let allusers = [];
   let stores = [];
   let admins = [];
 
- 
-users = getallusers?.[0]
-  ?.filter((element) => element.role === "user")
-  ?.map((element) => ({
-    id: element?.id,
-    name: element?.username,
-    email: element?.email,
-    address: element?.address,
-  }));
+  const [allusers, setUsers] = useState([
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'User', joinDate: '2024-01-15' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', joinDate: '2024-02-20' },
+    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'User', joinDate: '2024-03-10' }
+  ]);
+
+  
+  // allusers = getallusers?.[0]?.map((element) => {
+  //   return {
+  //     id: element?.id,
+  //     name: element?.username,
+  //     email: element?.email,
+  //     role: element?.role,
+  //   }
+  // })
+
+   users = getallusers?.[0]?.filter((element) => {
+      return element.role == "user"
+  }).map((element)=>{
+     return {
+      id: element?.id,
+      name: element?.username,
+      email: element?.email,
+      address:element?.address,
+      role: element?.role,
+    }
+  })
+
 
 
   stores = getallstores?.[0]?.map((element) => {
@@ -61,7 +82,7 @@ admins = getadmin?.[0]
 
 
  const handleLogout = ()=>{
-  localStorage.removeItem("adminToken")
+  localStorage.removeItem("Token")
   setTimeout(() => {
     toast.success("logout successfully");
      navigate("/")
@@ -229,6 +250,15 @@ admins = getadmin?.[0]
                   </div>
                 </button>
               </div>
+                {/* Users Table */}
+      <FilterableTable
+        title="Quick Management"
+        data={allusers}
+        addLabel="Add User"
+        icon={Users}
+        color="#3B82F6"
+        type="users"
+      />
             </div>
           )}
 
@@ -262,6 +292,9 @@ admins = getadmin?.[0]
             />
           )}
         </main>
+        
+      
+    
       </div>
 
       {/* Modal */}

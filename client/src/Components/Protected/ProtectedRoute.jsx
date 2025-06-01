@@ -2,7 +2,7 @@
 import { Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { Login } from '../../Redux/Slice/UserSlice/userSlice';
+import { Login } from '../../Redux/Slice/AdminSlice/adminSlice';
 
 export default function ProtectedRoute({ children, requiredRole }) {
     
@@ -15,7 +15,7 @@ export default function ProtectedRoute({ children, requiredRole }) {
       dispatch(Login)
      },[]);
     
-     const adminToken = localStorage.getItem("adminToken");
+     const adminToken = localStorage.getItem("Token");
 
      if(adminToken){
         return children

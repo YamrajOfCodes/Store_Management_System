@@ -1,16 +1,16 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import { addAdminAPI, addstoreAPI, getAdminAPI, getallstoresAPI, getallusersAPI, registerAPI, universalLoginAPI } from "../../../API/adminAPI/userAPI";
 import {toast} from "react-toastify"
+import { addreviewAPI, getReviewAPI, userVerifyAPI } from "../../../API/userAPI/userAPI";
 
 
 
-export const Register = createAsyncThunk("register",async(data)=>{
+export const addReview = createAsyncThunk("addreview",async(data)=>{
     try {
         
-        const response = await registerAPI(data);
+        const response = await addreviewAPI(data);
         console.log(response);
         if(response.status == 200){
-            toast.success("Register successful");
+            toast.success("review added");
             return response.data;
         }else{
             toast.error(response.response.data.error);
@@ -22,14 +22,16 @@ export const Register = createAsyncThunk("register",async(data)=>{
     }
 })
 
-export const addStore = createAsyncThunk("addstore",async(data)=>{
+
+export const userVerify = createAsyncThunk("userverify",async()=>{
     try {
-        const response  = await addstoreAPI(data);
-        if(response.status==200){
-            toast.success("store add successfull");
+        
+        const response = await userVerifyAPI();
+        if(response.status == 200){
             return response.data;
         }else{
-            toast.error(response.response.data.error)
+            toast.error(response.response.data.error);
+            
         }
     } catch (error) {
         console.log(error);
@@ -38,16 +40,16 @@ export const addStore = createAsyncThunk("addstore",async(data)=>{
 })
 
 
-export const addAdmin = createAsyncThunk("addadmin",async(data)=>{
+
+export const getReview = createAsyncThunk("getreview",async()=>{
     try {
-        console.log(data);
         
-        const response  = await addAdminAPI(data);
-        if(response.status==200){
-            toast.success("admin added successfull");
+        const response = await getReviewAPI();
+        if(response.status == 200){
             return response.data;
         }else{
-            toast.error(response.response.data.error)
+            toast.error(response.response.data.error);
+            
         }
     } catch (error) {
         console.log(error);
@@ -55,66 +57,6 @@ export const addAdmin = createAsyncThunk("addadmin",async(data)=>{
     }
 })
 
-export const getallUsers = createAsyncThunk("getallusers",async()=>{
-    try {
-        const response = await getallusersAPI();
-        
-        if(response.status==200){
-            return response.data;
-        }else{
-           return response.data
-        }
-    } catch (error) {
-        console.log(error);
-        
-    }
-})
-
-export const getallStores = createAsyncThunk("getallstores",async()=>{
-     try {
-        const response = await getallstoresAPI();
-        
-        if(response.status==200){
-            return response.data;
-        }else{
-           return response.data
-        }
-    } catch (error) {
-        console.log(error);
-        
-    }
-})
-
-export const getAdmin = createAsyncThunk("getadmin",async()=>{
-    try {
-        const response = await getAdminAPI();
-        
-        if(response.status==200){
-            return response.data;
-        }else{
-           return response.data
-        }
-    } catch (error) {
-        console.log(error);
-        
-    }
-})
-
-export const Login = createAsyncThunk("login",async(data)=>{
-    try {
-        const response = await universalLoginAPI(data);
-        
-        if(response.status==200){
-            localStorage.setItem("adminToken", response.data.token)
-            return response.data;
-        }else{
-           return response.data
-        }
-    } catch (error) {
-        console.log(error);
-        
-    }
-})
 
 
 
@@ -123,108 +65,55 @@ export const Login = createAsyncThunk("login",async(data)=>{
 
 
   const userSlice  = createSlice({
-    name:"userSlice",
+    name:"userslice",
     initialState:{
-        register:[],
-        addstore:[],
-        addadmin:[],
-        getadmin:[],
-        getallusers:[],
-        getallstores:[],
-        login:[],
+        addreview:[],
+        getreview:[],
+        userverify:[],
+        getreview:[],
         loader:false,
         error:null,
     },
     extraReducers:(builder)=>{
-        builder.addCase(Register.pending,(state,action)=>{
+        builder.addCase(addReview.pending,(state,action)=>{
             state.loader = true
         })
-        .addCase(Register.fulfilled,(state,action)=>{
+        .addCase(addReview.fulfilled,(state,action)=>{
             state.loader = false,
-            state.register = [action.payload]
+            state.addreview = [action.payload]
         })
-        .addCase(Register.rejected,(state,action)=>{
+        .addCase(addReview.rejected,(state,action)=>{
             state.error = [action.payload]
         })
 
-        builder.addCase(addStore.pending,(state,action)=>{
+        builder.addCase(userVerify.pending,(state,action)=>{
             state.loader = true
         })
-        .addCase(addStore.fulfilled,(state,action)=>{
-            // state.loader = false,
-            // state.login = [action.payload]
-            state.loader = false;
-            state.addstore = [action.payload];
-        })
-        .addCase(addStore.rejected,(state,action)=>{
-            state.error = [action.payload]
-        })
-
-
-
-        builder.addCase(addAdmin.pending,(state,action)=>{
-            state.loader = true
-        })
-        .addCase(addAdmin.fulfilled,(state,action)=>{
+        .addCase(userVerify.fulfilled,(state,action)=>{
             state.loader = false,
-            state.addadmin = [action.payload]
+            state.userverify = [action.payload]
         })
-        .addCase(addAdmin.rejected,(state,action)=>{
+        .addCase(userVerify.rejected,(state,action)=>{
             state.error = [action.payload]
         })
 
 
 
-        builder.addCase(getallUsers.pending,(state,action)=>{
+        builder.addCase(getReview.pending,(state,action)=>{
             state.loader = true
         })
-        .addCase(getallUsers.fulfilled,(state,action)=>{
+        .addCase(getReview.fulfilled,(state,action)=>{
             state.loader = false,
-            state.getallusers = [action.payload]
+            state.getreview = [action.payload]
         })
-        .addCase(getallUsers.rejected,(state,action)=>{
-            state.error = [action.payload]
-        })
-
-
-        builder.addCase(getAdmin.pending,(state,action)=>{
-            state.loader = true
-        })
-        .addCase(getAdmin.fulfilled,(state,action)=>{
-            state.loader = false,
-            state.getadmin = [action.payload]
-        })
-        .addCase(getAdmin.rejected,(state,action)=>{
-            state.error = [action.payload]
-        })
-
-
-        builder.addCase(getallStores.pending,(state,action)=>{
-            state.loader = true
-        })
-        .addCase(getallStores.fulfilled,(state,action)=>{
-            state.loader = false,
-            state.getallstores = [action.payload]
-        })
-        .addCase(getallStores.rejected,(state,action)=>{
-            state.error = [action.payload]
-        })
-
-        // Login 
-
-          builder.addCase(Login.pending,(state,action)=>{
-            state.loader = true
-        })
-        .addCase(Login.fulfilled,(state,action)=>{
-            state.loader = false,
-            state.login = [action.payload]
-        })
-        .addCase(Login.rejected,(state,action)=>{
+        .addCase(getReview.rejected,(state,action)=>{
             state.error = [action.payload]
         })
 
 
 
+
+        
 
     }
 })

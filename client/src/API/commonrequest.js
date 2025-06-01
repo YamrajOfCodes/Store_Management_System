@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const commonrequest = async(methods,url,body,header,auth)=>{
-    const adminToken = localStorage.getItem("adminToken");
-    const userToken = localStorage.getItem("userToken");
+    const adminToken = localStorage.getItem("Token");
+    const userToken = localStorage.getItem("Token");
    
     const config ={
         method:methods,

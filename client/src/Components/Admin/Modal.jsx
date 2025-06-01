@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { addAdmin, addStore, Register } from '../../Redux/Slice/UserSlice/userSlice';
+import { addAdmin, addStore, Register } from '../../Redux/Slice/AdminSlice/adminSlice';
 import { useDispatch } from 'react-redux';
 
 

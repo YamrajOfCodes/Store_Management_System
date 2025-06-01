@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, MapPin, Sparkles } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Login, Register } from '../../Redux/Slice/UserSlice/userSlice';
+import { Login, Register } from '../../Redux/Slice/AdminSlice/adminSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { userVerify } from '../../Redux/Slice/UserSlice/userSlice';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
@@ -42,7 +43,6 @@ export default function AuthPage() {
                 if (res.payload) {
                     const { role } = res.payload.user; 
                     setrole(role);
-                    console.log("User role:", role);
                     toast.success("Login successful");
                     if (role === 'admin') {
                         navigate('/dashboard');
@@ -57,9 +57,9 @@ export default function AuthPage() {
         } else {
             dispatch(Register(formData)).then((res) => {
                 if (res.payload) {
-                    setIsLogin(false);
+                    setIsLogin(!isLogin);
                 } else {
-                    setIsLogin(false)
+                    // setIsLogin(false)
                 }
             })
 

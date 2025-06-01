@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
 import { addlikeAPI, createPostAPI, deletepostAPI, getpostsAPI, getsinglepostsAPI, removelikeAPI } from "../../../API/postAPI/postAPI";
 import { toast } from "react-toastify";
 import { Navigate } from "react-router-dom";
-import { addCommentAPI, getcommentsAPI } from "../../../API/CommentsAPi/CommentApi";
+// import { addCommentAPI, getcommentsAPI } from "../../../API/CommentsAPi/CommentApi";
 
 
 

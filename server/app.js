@@ -9,6 +9,9 @@ app.use(cors("*"));
 import AdminRouter from "./Routes/Admin/adminRoutes.js";
 app.use("/admin/api",AdminRouter);
 
+import userRouter from "./Routes/User/userRoutes.js";
+app.use("/user/api",userRouter);
+
 
 
 app.listen(4000,()=>{

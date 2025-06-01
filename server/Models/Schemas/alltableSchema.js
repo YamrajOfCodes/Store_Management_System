@@ -1,53 +1,41 @@
 import pool from "../../Db/dbConnect.js";
 
-
 const createTables = async () => {
   try {
-    // await pool.query(`
-    //     CREATE TABLE IF NOT EXISTS user (
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     username VARCHAR(100),
-    //     email VARCHAR(255) UNIQUE,
-    //     password VARCHAR(255),
-    //     address VARCHAR(200),
-    //     role VARCHAR(10)
-    //   )
-    // `);
-
+    // 1. Create users table
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS store (
+      CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(255) UNIQUE,
-        storename VARCHAR(255),
-        address VARCHAR(100),
-        rating INT,
-        rating_counter INT 
-      )
+        username VARCHAR(50) NOT NULL,
+        email VARCHAR(100) UNIQUE,
+        password VARCHAR(255),
+        address VARCHAR(200),
+        role VARCHAR(100)
+      );
     `);
 
-    // await pool.query(`
-    //   CREATE TABLE IF NOT EXISTS admin (
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     email VARCHAR(255) UNIQUE,
-    //     admin_name VARCHAR(255),
-    //     address VARCHAR(100),
-    //     password VARCHAR(100),
-    //     role VARCHAR(10)
-    //   )
-    // `);
-
+    // 2. Create stores table (depends on users)
     await pool.query(`
-    CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL ,
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(255) ,
-    address VARCHAR(200),
-    role VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);     
- `);
+      CREATE TABLE IF NOT EXISTS stores (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        storename VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        address VARCHAR(255),
+        rating FLOAT DEFAULT 0,
+        total_reviews INT DEFAULT 0
+      );
+    `);
+
+    // 3. Create store_reviews table (depends on stores and users)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS store_reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        store_id INT NOT NULL,
+        user_id INT NOT NULL,
+        rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        review TEXT
+      );
+    `);
 
     console.log("✅ Tables created successfully.");
     process.exit(0);
@@ -57,4 +45,4 @@ const createTables = async () => {
   }
 };
 
-export default createTables
+export default createTables;
