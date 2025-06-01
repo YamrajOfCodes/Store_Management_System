@@ -30,3 +30,7 @@ export const getallstoresAPI = async(header)=>{
 export const getAdminAPI = async(data,header)=>{  
     return await commonrequest("GET",`${BASE_URL}/admin/api/getadmins`,data,header,"user");
 }
+
+export const deleteuserAPI = async(data,header)=>{  
+    return await commonrequest("DELETE",`${BASE_URL}/admin/api/deleteuser/${data}`,{},header,"");
+}
