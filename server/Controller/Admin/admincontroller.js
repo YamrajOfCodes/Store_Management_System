@@ -1,7 +1,7 @@
 import pool from "../../Db/dbConnect.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-const ADMINSECRET="dhsjdh879";
+const ADMINSECRET=process.env.SECRET;
 
 // import createTables from "../../Models/Schemas/alltableSchema.js";
 

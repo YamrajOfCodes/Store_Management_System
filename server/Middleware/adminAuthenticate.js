@@ -1,4 +1,4 @@
-const SECRET="dhsjdh879";
+const SECRET=process.env.SECRET;
 import jwt from "jsonwebtoken";
 import pool from "../Db/dbConnect.js";
 

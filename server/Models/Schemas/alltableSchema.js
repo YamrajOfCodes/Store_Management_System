@@ -2,7 +2,7 @@ import pool from "../../Db/dbConnect.js";
 
 const createTables = async () => {
   try {
-    // 1. Create users table
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -14,7 +14,7 @@ const createTables = async () => {
       );
     `);
 
-    // 2. Create stores table (depends on users)
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS stores (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -26,7 +26,7 @@ const createTables = async () => {
       );
     `);
 
-    // 3. Create store_reviews table (depends on stores and users)
+ 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS store_reviews (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -37,7 +37,7 @@ const createTables = async () => {
       );
     `);
 
-    console.log("✅ Tables created successfully.");
+    console.log(" Tables created successfully.");
     process.exit(0);
   } catch (err) {
     console.error("❌ Error creating tables:", err);
