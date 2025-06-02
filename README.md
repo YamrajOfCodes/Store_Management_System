@@ -204,21 +204,6 @@ CREATE TABLE ratings (
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
----
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-- 📧 Email: support@storemanagement.com
-- 💬 Create an issue on GitHub
-- 📚 Check our [Documentation](docs/)
-
----
 
 ## 🎯 Future Enhancements
 
