@@ -34,8 +34,6 @@ A comprehensive **React and Node.js** application designed to streamline store m
 - 📋 **Complete Store Listings** with:
   - Store Name, Email, Address, Overall Rating
 
----
-
 ## 👤 Normal User Features
 
 ### 🎯 **Account Management**
@@ -44,11 +42,8 @@ A comprehensive **React and Node.js** application designed to streamline store m
 - 🔑 **Secure Login System**
 - 🔒 **Password Update** functionality
 
-
 ### ⭐ **Rating System**
 - 📊 **Submit Ratings** (1-5 scale) for any store
-
----
 
 ## 🏬 Store Owner Features
 
@@ -96,7 +91,7 @@ A comprehensive **React and Node.js** application designed to streamline store m
 
 ### Prerequisites
 - Node.js (v14 or higher)
-- MongoDB
+- MySQL
 - npm or yarn
 
 ### Installation
@@ -120,12 +115,11 @@ npm install
 3. **Environment Variables**
 Create a `.env` file in the root directory:
 ```env
-DATABASE
-HOST
-PASSWORD
-USER
-SECRET
-
+DATABASE=your_database_name
+HOST=localhost
+PASSWORD=your_database_password
+USER=your_database_user
+SECRET=your_jwt_secret_key
 ```
 
 4. **Start the application**
@@ -165,15 +159,66 @@ npm start
 - 🔐 **Password Hashing** with bcrypt
 - 🎭 **Role-Based Access Control**
 - 🚫 **Input Validation & Sanitization**
+
 ---
 
+## 📊 Database Schema
 
+### Users Table
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  address TEXT,
+  role ENUM('admin', 'user', 'store_owner') DEFAULT 'user'
+);
+```
+
+### Stores Table
+```sql
+CREATE TABLE stores (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  address TEXT,
+  owner_id INT,
+  average_rating DECIMAL(2,1) DEFAULT 0,
+  FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+```
+
+### Ratings Table
+```sql
+CREATE TABLE ratings (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT,
+  store_id INT,
+  rating INT CHECK (rating >= 1 AND rating <= 5),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (store_id) REFERENCES stores(id)
+);
+```
+
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
+---
 
+## 📞 Support
+
+If you encounter any issues or have questions:
+
+- 📧 Email: support@storemanagement.com
+- 💬 Create an issue on GitHub
+- 📚 Check our [Documentation](docs/)
+
+---
 
 ## 🎯 Future Enhancements
 
