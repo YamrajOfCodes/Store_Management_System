@@ -2,6 +2,8 @@ import {  Trash2,X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteUser } from "../../Redux/Slice/AdminSlice/adminSlice";
+import { userVerify } from "../../Redux/Slice/UserSlice/userSlice";
+import { toast } from "react-toastify";
 
 const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,14 +11,24 @@ const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) =>
   const [emailFilter, setEmailFilter] = useState('');
 
   const {deleteuser} = useSelector((state)=>state.user)
+  const {userverify} = useSelector((state)=>state.user2)
   const dispatch = useDispatch();
+
+  // console.log(userverify);
+  
   // Get unique roles for filter dropdown
   const uniqueRoles = [...new Set(data.map(item => item.role))];
 
   const handleDeleteuser = (userId)=>{
     // console.log(id);
+
+    if(userverify?.[0]?.[0]?.role == "admin"){
+      dispatch(DeleteUser(userId))
+
+    }else{
+      toast.error("You does not have autherity to delete the user")
+    }
     
-    dispatch(DeleteUser(userId))
   }
 
   // Filter data based on search criteria
@@ -28,7 +40,7 @@ const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) =>
   });
 
   useEffect(()=>{
-  
+   dispatch(userVerify())
   },[deleteuser])
 
   return (

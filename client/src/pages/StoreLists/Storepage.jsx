@@ -67,10 +67,15 @@ const StorePage = () => {
   let stores=[];
 
 
-  useEffect(()=>{
+   const handleAPICalling = ()=>{
     dispatch(getallStores());
     dispatch(userVerify())
     dispatch(getReview())
+   }
+
+
+  useEffect(()=>{
+    handleAPICalling();
   },[])
 
   useEffect(()=>{

@@ -7,7 +7,7 @@ import { getAdmin, getallStores, getallUsers } from '../../Redux/Slice/AdminSlic
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FilterableTable from './FilterTable';
-import { getAllReviews } from '../../Redux/Slice/UserSlice/userSlice';
+import { getAllReviews, userVerify } from '../../Redux/Slice/UserSlice/userSlice';
 
 const AdminDashboard = () => {
 
@@ -27,10 +27,11 @@ const AdminDashboard = () => {
   const { register } = useSelector((state) => state.user);
   const { addstore } = useSelector((state) => state.user);
   const { getallreviews } = useSelector((state) => state.user2);
+  const { userverify } = useSelector((state) => state.user2);
   const {deleteuser}=useSelector((state)=>state.user)
 
   // console.log(getallreviews);
-  // console.log(getallstores);
+  // console.log(userverify);
 
  
   useEffect(() => {
@@ -87,12 +88,15 @@ const AdminDashboard = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("Token");
-    localStorage.removeItem("activeTab"); 
-    setTimeout(() => {
-      toast.success("Logout successfully");
-      navigate("/");
-    }, 1000);
+    if(userverify?.[0]?.[0]?.role == "admin"){
+
+      localStorage.removeItem("Token");
+      localStorage.removeItem("activeTab"); 
+      setTimeout(() => {
+        toast.success("Logout successfully");
+        navigate("/");
+      }, 1000);
+    }
   };
 
   // Handle tab change
@@ -101,11 +105,16 @@ const AdminDashboard = () => {
     setSidebarOpen(false);
   };
 
-  useEffect(() => {
-    dispatch(getallUsers());
+  const handleAPICalling = ()=>{
+     dispatch(getallUsers());
     dispatch(getallStores());
     dispatch(getAdmin());
+    dispatch(userVerify())
     dispatch(getAllReviews())
+  }
+
+  useEffect(() => {
+   handleAPICalling();
   }, [dispatch, register, addstore,deleteuser]);
 
   const totalRatings = 1247; // Sample rating count

@@ -2,6 +2,8 @@
 import {  Plus, Edit, Trash2 } from 'lucide-react';
 import { DeleteUser } from "../../Redux/Slice/AdminSlice/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { userVerify } from "../../Redux/Slice/UserSlice/userSlice";
+import { toast } from "react-toastify";
 
   
   const DataTable = ({ title, data, columns, onAdd, addLabel }) => {
@@ -9,14 +11,20 @@ import { useDispatch, useSelector } from "react-redux";
     const dispatch = useDispatch();
     
   const {deleteuser} = useSelector((state)=>state.user)
+  const {userverify} = useSelector((state)=>state.user2)
+
 
   
-   const handleDeleteuser = (userId)=>{   
-       dispatch(DeleteUser(userId))  
+   const handleDeleteuser = (userId)=>{  
+       if(userverify?.[0]?.[0]?.role == "admin"){
+         dispatch(DeleteUser(userId))  
+       }else{
+        toast.error("You does not have Autherity")
+       }
      }
 
        useEffect(()=>{
-  
+       dispatch(userVerify())
   },[deleteuser])
 
 

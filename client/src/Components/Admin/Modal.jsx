@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { addAdmin, addStore, Register } from '../../Redux/Slice/AdminSlice/adminSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { userVerify } from '../../Redux/Slice/UserSlice/userSlice';
+import { toast } from 'react-toastify';
 
 
 
@@ -25,6 +28,8 @@ export default function UserForm({ onClose, title }) {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const {userverify} = useSelector((state)=>state.user2)
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,11 +103,17 @@ export default function UserForm({ onClose, title }) {
 
     return newErrors;
   };
+   
+   useEffect(()=>{
+     dispatch(userVerify())
+    },[])
+  
 
   const handleSubmit = () => {
     const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length === 0) {
+   if(userverify?.[0]?.[0]?.role == "admin"){
+     if (Object.keys(newErrors).length === 0) {
       try {
         if (title === "User") {
           dispatch(Register(formData));
@@ -122,6 +133,9 @@ export default function UserForm({ onClose, title }) {
     } else {
       setErrors(newErrors);
     }
+   }else{
+    toast.error("You does not have Autherity")
+   }
   };
 
   // Get current form values based on title

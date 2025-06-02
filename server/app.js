@@ -3,10 +3,9 @@ import DbConnect from "./Db/dbConnect.js";
 const app = express();
 app.use(express.json());
 import cors from "cors";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+dotenv.config({ path: './store.env' });
 
-
-dotenv.config({ path: "./store.env" });
 
 
 

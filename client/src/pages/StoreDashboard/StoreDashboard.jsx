@@ -17,10 +17,6 @@ const StoreDashboard = () => {
   const {getallusers} = useSelector((state)=> state.user);
 
 
-//   console.log(getallreviews);
-
-
-
   const {getstore} = useSelector((state)=> state.user2);
   // console.log(getstore);
 
@@ -37,7 +33,6 @@ const StoreDashboard = () => {
         }
     })
 
-    // console.log(getallusers);
 
 
 let users = getstoreReviews?.map((review) => {
@@ -49,17 +44,6 @@ let users = getstoreReviews?.map((review) => {
         
     })
 
-
-    // console.log(users);
-    
-    
-
-  // console.log(getstoreReviews);
-  
-  
-
-
-
 const {userverify} = useSelector((state)=>state.user2);
 // console.log(userverify);
 let email  = userverify?.[0]?.[0]?.email;
@@ -70,11 +54,15 @@ let email  = userverify?.[0]?.[0]?.email;
         email
     }
 
- useEffect(() => {
+    const handleAPICalling = ()=>{
     dispatch(userVerify());
     dispatch(getReview());
     dispatch(getAllReviews())
     dispatch(getallUsers())
+    }
+
+ useEffect(() => {
+    handleAPICalling();
   }, [dispatch]);
 
   // Once verified and email is available, get store info
@@ -87,8 +75,6 @@ let email  = userverify?.[0]?.[0]?.email;
   }, [userverify, email, dispatch]);
 
     
-    
-  // Password change form state
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',

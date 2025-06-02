@@ -4,8 +4,8 @@ import {addAdmin, addStore, addUser, adminLogin, deleteUser, getadmin, getallsto
 import authenticate from "../../Middleware/adminAuthenticate.js";
 
 router.post("/adduser",addUser);
-router.post("/addstore",addStore);
-router.post("/addadmin",addAdmin);
+router.post("/addstore",authenticate,addStore);
+router.post("/addadmin",authenticate,addAdmin);
 router.post("/adminlogin",adminLogin);
 
 
@@ -13,6 +13,6 @@ router.get("/getallusers",getallusers);
 router.get("/getallstores",getallstores);
 router.get("/getadmins",getadmin);
 
-router.delete("/deleteuser/:userId",deleteUser)
+router.delete("/deleteuser/:userId",authenticate,deleteUser)
 
 export default router;
