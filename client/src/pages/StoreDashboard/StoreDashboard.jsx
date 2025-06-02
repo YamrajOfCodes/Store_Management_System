@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User, Star, Lock, LogOut, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ChangePassword, getAllReviews, getReview, getStore, userVerify } from '../../Redux/Slice/UserSlice/userSlice';
@@ -22,7 +22,7 @@ const StoreDashboard = () => {
 
 
   const {getstore} = useSelector((state)=> state.user2);
-  console.log(getstore);
+  // console.log(getstore);
 
   let storereview = getreview?.[0]?.data.filter((element)=>{
      if(element.storeId == getstore?.[0]?.[0]?.id){
@@ -37,7 +37,7 @@ const StoreDashboard = () => {
         }
     })
 
-    console.log(getallusers);
+    // console.log(getallusers);
 
 
 let users = getstoreReviews?.map((review) => {
@@ -45,23 +45,23 @@ let users = getstoreReviews?.map((review) => {
 }).filter(Boolean); // removes undefined if no match
 
     getallusers?.[0]?.map((element)=>{
-        console.log(element);
+        // console.log(element);
         
     })
 
 
-    console.log(users);
+    // console.log(users);
     
     
 
-  console.log(getstoreReviews);
+  // console.log(getstoreReviews);
   
   
 
 
 
 const {userverify} = useSelector((state)=>state.user2);
-console.log(userverify);
+// console.log(userverify);
 let email  = userverify?.[0]?.[0]?.email;
 // console.log(userverify?.[0]?.[0]?.email);
 
@@ -80,7 +80,7 @@ let email  = userverify?.[0]?.[0]?.email;
   // Once verified and email is available, get store info
   useEffect(() => {
     if (userverify && email) {
-        console.log(email);
+        // console.log(email);
         
       dispatch(getStore(data));
     }
@@ -128,7 +128,7 @@ let storeData = [];
       return;
     }
     
-    console.log(passwordData);
+    // console.log(passwordData);
 
     let data = {
         userId:userverify?.[0]?.[0]?.id,

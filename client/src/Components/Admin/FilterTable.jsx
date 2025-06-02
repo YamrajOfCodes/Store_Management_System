@@ -1,13 +1,23 @@
-import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {  Trash2,X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { DeleteUser } from "../../Redux/Slice/AdminSlice/adminSlice";
 
 const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
 
+  const {deleteuser} = useSelector((state)=>state.user)
+  const dispatch = useDispatch();
   // Get unique roles for filter dropdown
   const uniqueRoles = [...new Set(data.map(item => item.role))];
+
+  const handleDeleteuser = (userId)=>{
+    // console.log(id);
+    
+    dispatch(DeleteUser(userId))
+  }
 
   // Filter data based on search criteria
   const filteredData = data.filter(item => {
@@ -16,6 +26,10 @@ const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) =>
     const matchesEmail = item.email.toLowerCase().includes(emailFilter.toLowerCase());
     return matchesSearch && matchesRole && matchesEmail;
   });
+
+  useEffect(()=>{
+  
+  },[deleteuser])
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 hover:shadow-xl transition-all duration-300" style={{ borderLeftColor: color }}>
@@ -82,7 +96,7 @@ const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) =>
         </div>
       </div>
 
-      {/* Results Summary */}
+   
       {(searchTerm || roleFilter || emailFilter) && (
         <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-700">
@@ -159,10 +173,7 @@ const FilterableTable = ({ title, data,  addLabel, icon: Icon, color, type }) =>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all">
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-all">
+                      <button className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-all" onClick={()=>{handleDeleteuser(item.id)}}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

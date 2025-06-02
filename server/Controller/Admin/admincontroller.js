@@ -10,9 +10,13 @@ const ADMINSECRET="dhsjdh879";
 
  export const addUser = async(req,res)=>{
  
-     const { username, email, password, address, role  } = req.body;
+     let { username, email, password, address, role  } = req.body;
 
-    //  console.log(username); // kundan
+     console.log(role); // kundan
+
+    if(role == null){
+      role = "user";
+    }
 
 
     try {
@@ -180,6 +184,18 @@ export const getadmin = async(req,res)=>{
         console.log(error);
         
     }
+}
+
+export const deleteUser = async(req,res)=>{
+
+   const {userId}  = req.params
+
+   try {
+    const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [userId]);
+    return res.status(200).json({result});
+  } catch (error) {
+    console.error('Error deleting user:', error);
+  }
 }
 
 

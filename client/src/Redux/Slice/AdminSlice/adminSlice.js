@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import { addAdminAPI, addstoreAPI, getAdminAPI, getallstoresAPI, getallusersAPI, registerAPI, universalLoginAPI } from "../../../API/adminAPI/adminAPI";
+import { addAdminAPI, addstoreAPI, deleteuserAPI, getAdminAPI, getallstoresAPI, getallusersAPI, registerAPI, universalLoginAPI } from "../../../API/adminAPI/adminAPI";
 import {toast} from "react-toastify"
 
 
@@ -117,6 +117,23 @@ export const Login = createAsyncThunk("login",async(data)=>{
 })
 
 
+export const DeleteUser = createAsyncThunk("deleteuser",async(data)=>{
+    try {
+        const response = await deleteuserAPI(data);
+        
+        if(response.status==200){
+            toast.success("user deleted successfully")
+            return response.data;
+        }else{
+           return response.data
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+})
+
+
 
 
 
@@ -131,6 +148,7 @@ export const Login = createAsyncThunk("login",async(data)=>{
         getadmin:[],
         getallusers:[],
         getallstores:[],
+        deleteuser:[],
         login:[],
         loader:false,
         error:null,
@@ -220,6 +238,22 @@ export const Login = createAsyncThunk("login",async(data)=>{
             state.login = [action.payload]
         })
         .addCase(Login.rejected,(state,action)=>{
+            state.error = [action.payload]
+        })
+
+
+        //deleteuser
+
+
+        
+          builder.addCase(DeleteUser.pending,(state,action)=>{
+            state.loader = true
+        })
+        .addCase(DeleteUser.fulfilled,(state,action)=>{
+            state.loader = false,
+            state.deleteuser = [action.payload]
+        })
+        .addCase(DeleteUser.rejected,(state,action)=>{
             state.error = [action.payload]
         })
 

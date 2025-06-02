@@ -117,7 +117,7 @@ export default function UserForm({ onClose, title }) {
         onClose();
       } catch (error) {
         alert('An error occurred. Please try again.');
-        console.error('Form submission error:', error);
+        // console.error('Form submission error:', error);
       }
     } else {
       setErrors(newErrors);

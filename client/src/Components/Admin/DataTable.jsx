@@ -1,15 +1,33 @@
-  import React from "react";
+  import React, { useEffect } from "react";
 import {  Plus, Edit, Trash2 } from 'lucide-react';
+import { DeleteUser } from "../../Redux/Slice/AdminSlice/adminSlice";
+import { useDispatch, useSelector } from "react-redux";
 
   
-  const DataTable = ({ title, data, columns, onAdd, addLabel }) => (
-    <div className="bg-white rounded-lg shadow-md p-6">
+  const DataTable = ({ title, data, columns, onAdd, addLabel }) => {
+
+    const dispatch = useDispatch();
+    
+  const {deleteuser} = useSelector((state)=>state.user)
+
+  
+   const handleDeleteuser = (userId)=>{   
+       dispatch(DeleteUser(userId))  
+     }
+
+       useEffect(()=>{
+  
+  },[deleteuser])
+
+
+   return (
+     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         <button
           onClick={onAdd}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-        >
+          >
           <Plus className="h-4 w-4" />
           {addLabel}
         </button>
@@ -44,10 +62,7 @@ import {  Plus, Edit, Trash2 } from 'lucide-react';
                 ))}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
+                    <button className="text-red-600 hover:text-red-900" onClick={()=>{handleDeleteuser(data?.[index].id)}}>
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -58,6 +73,7 @@ import {  Plus, Edit, Trash2 } from 'lucide-react';
         </table>
       </div>
     </div>
-  );
-
+)
+  };
+  
   export default DataTable

@@ -7,96 +7,106 @@ import { getAdmin, getallStores, getallUsers } from '../../Redux/Slice/AdminSlic
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FilterableTable from './FilterTable';
+import { getAllReviews } from '../../Redux/Slice/UserSlice/userSlice';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('activeTab') || 'dashboard';
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalType, setModalType] = useState('');
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { getallusers } = useSelector((state) => state.user);
   const { getallstores } = useSelector((state) => state.user);
   const { getadmin } = useSelector((state) => state.user);
-
-
   const { register } = useSelector((state) => state.user);
-  const { addstore } = useSelector((state) => state.user)
-  console.log(getadmin);
-  console.log(getallstores);
+  const { addstore } = useSelector((state) => state.user);
+  const { getallreviews } = useSelector((state) => state.user2);
+  const {deleteuser}=useSelector((state)=>state.user)
 
+  // console.log(getallreviews);
+  // console.log(getallstores);
 
+ 
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+
+  
   let users = [];
-  // let allusers = [];
+  let allusers = [];
   let stores = [];
   let admins = [];
 
-  const [allusers, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'User', joinDate: '2024-01-15' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', joinDate: '2024-02-20' },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'User', joinDate: '2024-03-10' }
-  ]);
-
   
-  // allusers = getallusers?.[0]?.map((element) => {
-  //   return {
-  //     id: element?.id,
-  //     name: element?.username,
-  //     email: element?.email,
-  //     role: element?.role,
-  //   }
-  // })
-
-   users = getallusers?.[0]?.filter((element) => {
-      return element.role == "user" || element.role == "shopOwner"
-  }).map((element)=>{
-     return {
+  if (getallusers?.[0]) {
+    allusers = getallusers[0].map((element) => ({
       id: element?.id,
       name: element?.username,
       email: element?.email,
       role: element?.role,
-      address:element?.address,
-    }
-  })
+    }));
+
+    // Filter users (exclude admins)
+    users = getallusers[0]
+      .filter((element) => element.role === "user" || element.role === "shopOwner")
+      .map((element) => ({
+        id: element?.id,
+        name: element?.username,
+        email: element?.email,
+        role: element?.role,
+        address: element?.address,
+      }));
+  }
 
 
-
-  stores = getallstores?.[0]?.map((element) => {
-    return {
+  if (getallstores?.[0]) {
+    stores = getallstores[0].map((element) => ({
       id: element?.id,
       name: element?.storename,
       email: element?.email,
       address: element?.address,
-    }
-  })
+    }));
+  }
 
-admins = getadmin?.[0]
-  ?.filter((element) => element.role === "admin")
-  ?.map((element) => ({
-    id: element?.id,
-    name: element?.username,
-    email: element?.email,
-    address: element?.address,
-  }));
+  // Process admins data
+  if (getadmin?.[0]) {
+    admins = getadmin[0]
+      .filter((element) => element.role === "admin")
+      .map((element) => ({
+        id: element?.id,
+        name: element?.username,
+        email: element?.email,
+        address: element?.address,
+      }));
+  }
 
+  const handleLogout = () => {
+    localStorage.removeItem("Token");
+    localStorage.removeItem("activeTab"); 
+    setTimeout(() => {
+      toast.success("Logout successfully");
+      navigate("/");
+    }, 1000);
+  };
 
- const handleLogout = ()=>{
-  localStorage.removeItem("Token")
-  setTimeout(() => {
-    toast.success("logout successfully");
-     navigate("/")
-  }, 1000);
- }
+  // Handle tab change
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSidebarOpen(false);
+  };
 
-
- useEffect(() => {
-  dispatch(getallUsers());
-  dispatch(getallStores());
-  dispatch(getAdmin());
-}, [register, addstore]);
-
-
+  useEffect(() => {
+    dispatch(getallUsers());
+    dispatch(getallStores());
+    dispatch(getAdmin());
+    dispatch(getAllReviews())
+  }, [dispatch, register, addstore,deleteuser]);
 
   const totalRatings = 1247; // Sample rating count
 
@@ -105,14 +115,12 @@ admins = getadmin?.[0]
     setShowAddModal(true);
   };
 
-
-
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Users },
     { id: 'users', label: 'Users', icon: Users },
     { id: 'stores', label: 'Stores', icon: Store },
     { id: 'admins', label: 'Admins', icon: UserCheck },
-    { id: 'Logout', label:'Logout',icon:LogOut}
+    { id: 'logout', label: 'Logout', icon: LogOut }
   ];
 
   const StatCard = ({ title, value, icon: Icon, color }) => (
@@ -127,16 +135,12 @@ admins = getadmin?.[0]
     </div>
   );
 
-
-
-
-
-
-
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
           <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
           <button
@@ -149,18 +153,34 @@ admins = getadmin?.[0]
         <nav className="mt-6">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
+            
+            // Handle logout separately
+            if (item.id === 'logout') {
+              return (
+                <button
+                  key={item.id}
+                  onClick={handleLogout}
+                  className="w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors text-gray-700 hover:text-red-600"
+                >
+                  <Icon className="h-5 w-5 mr-3" />
+                  {item.label}
+                </button>
+              );
+            }
+            
+            // Handle regular navigation items
             return (
               <button
                 key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setSidebarOpen(false);
-                }}
-                className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors ${activeTab === item.id ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : 'text-gray-700'
-                  }`}
+                onClick={() => handleTabChange(item.id)}
+                className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-100 transition-colors ${
+                  activeTab === item.id 
+                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' 
+                    : 'text-gray-700'
+                }`}
               >
-                <Icon className="h-5 w-5 mr-3"  />
-                <button onClick={item.label == "Logout" && handleLogout}>{item.label}</button>
+                <Icon className="h-5 w-5 mr-3" />
+                {item.label}
               </button>
             );
           })}
@@ -204,11 +224,10 @@ admins = getadmin?.[0]
                 />
                 <StatCard
                   title="Total Ratings"
-                  value={totalRatings}
+                  value={getallreviews?.[0]?.length}
                   icon={Star}
                   color="#F59E0B"
                 />
-
               </div>
 
               {/* Quick Actions */}
@@ -250,22 +269,23 @@ admins = getadmin?.[0]
                   </div>
                 </button>
               </div>
-                {/* Users Table */}
-      <FilterableTable
-        title="Quick Management"
-        data={allusers}
-        addLabel="Add User"
-        icon={Users}
-        color="#3B82F6"
-        type="users"
-      />
+              
+              {/* Users Table */}
+              <FilterableTable
+                title="Quick Management"
+                data={allusers || []}
+                addLabel="Add User"
+                icon={Users}
+                color="#3B82F6"
+                type="users"
+              />
             </div>
           )}
 
           {activeTab === 'users' && (
             <DataTable
               title="Users Management"
-              data={users}
+              data={users || []}
               columns={['Name', 'Email', 'Role', 'address']}
               onAdd={() => openAddModal('user')}
               addLabel="Add User"
@@ -275,7 +295,7 @@ admins = getadmin?.[0]
           {activeTab === 'stores' && (
             <DataTable
               title="Stores Management"
-              data={stores}
+              data={stores || []}
               columns={['store name', 'email', 'Location']}
               onAdd={() => openAddModal('store')}
               addLabel="Add Store"
@@ -285,16 +305,13 @@ admins = getadmin?.[0]
           {activeTab === 'admins' && (
             <DataTable
               title="Admins Management"
-              data={admins}
+              data={admins || []}
               columns={['Name', 'Email', 'Address']}
               onAdd={() => openAddModal('admin')}
               addLabel="Add Admin"
             />
           )}
         </main>
-        
-      
-    
       </div>
 
       {/* Modal */}

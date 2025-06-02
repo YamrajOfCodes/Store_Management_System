@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Star, MapPin, Clock, Phone, Search, LogOut, User } from 'lucide-react';
+import { Star, MapPin, Clock, Phone, Search, LogOut, User, Lock, Eye } from 'lucide-react';
 import { useEffect } from 'react';
 import { getallStores } from '../../Redux/Slice/AdminSlice/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { addReview, getReview, userVerify } from '../../Redux/Slice/UserSlice/userSlice';
+import { addReview, ChangePassword, getReview, userVerify } from '../../Redux/Slice/UserSlice/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const StorePage = () => {
   const [selectedStore, setSelectedStore] = useState(null);
@@ -20,12 +21,48 @@ const StorePage = () => {
   const {addreview} = useSelector((state)=>state.user2);
   const navigate = useNavigate();
 
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+   const [showNewPassword, setShowNewPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
   
-  console.log(getreview?.[0]?.data);
-  console.log(userverify?.[0]?.[0]?.id);
+
+
+     const handlePasswordChange = () => {
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+          toast.info("Both Passwords Should be match")
+          return;
+        }
+        
+        if (passwordData.newPassword.length < 6) {
+          toast.info('New password must be at least 6 characters');
+          return;
+        }
+        
+        // console.log(passwordData);
+    
+        let data = {
+            userId:userverify?.[0]?.[0]?.id,
+            oldPassword:passwordData.currentPassword,
+            newPassword:passwordData.confirmPassword
+        }
+    
+        dispatch(ChangePassword(data))
+        
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setShowPasswordForm(false);
+       
+      };
+
+  
+  // console.log(getreview?.[0]?.data);
+  // console.log(userverify?.[0]?.[0]?.id);
   
   let id = userverify?.[0]?.[0]?.id
-  console.log("id",id);
+  // console.log("id",id);
   
   let stores=[];
 
@@ -106,7 +143,7 @@ const StorePage = () => {
 
   const handleSubmitReview = () => {
     if (userRating === 0) {
-      alert('Please select a rating!');
+      toast.info('Please select a rating!');
       return;
     }
 
@@ -139,6 +176,16 @@ const StorePage = () => {
               </h1>
               <p className="text-gray-600 mt-2">Find the perfect store for your needs</p>
             </div>
+
+            <div>
+               <button
+                onClick={() => setShowPasswordForm(!showPasswordForm)}
+                className="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-indigo-600 hover:bg-gray-100 rounded-lg transition duration-200"
+              >
+                <Lock className="w-4 h-4 mr-2" />
+                Change Password
+              </button>
+            </div>
             
             {/* Search Bar */}
             <div className="flex-1 max-w-md mx-auto lg:mx-0">
@@ -152,8 +199,11 @@ const StorePage = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
+              
             </div>
+            
 
+     
             {/* User Profile & Logout */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-gray-700">
@@ -178,6 +228,79 @@ const StorePage = () => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className='w-full flex justify-center'>
+          {showPasswordForm && (
+          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 w-2/3">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h2>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                  <input
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter current password"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      placeholder="Enter new password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                  <input
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={handlePasswordChange}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200"
+                >
+                  Update Password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  }}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Store Grid */}

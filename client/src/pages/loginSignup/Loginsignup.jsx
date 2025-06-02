@@ -10,7 +10,7 @@ export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const { login } = useSelector((state) => state.user);
-    console.log(login);
+    // console.log(login);
     const navigate = useNavigate();
 
 
@@ -56,16 +56,22 @@ export default function AuthPage() {
                 }
             });
 
-        } else {
-            dispatch(Register(formData)).then((res) => {
-                if (res.payload) {
-                    setIsLogin(!isLogin);
-                } else {
-                    // setIsLogin(false)
-                }
-            })
-
+        }  else {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,16}$/;
+        if (!passwordRegex.test(formData.password)) {
+            toast.error("Password must be 8-16 characters, include at least one uppercase letter and one special character.");
+            return;
         }
+
+        dispatch(Register(formData)).then((res) => {
+            if (res.payload) {
+                toast.success("Registration successful! Please login.");
+                setIsLogin(true);
+            } else {
+                toast.error("Registration failed.");
+            }
+        });
+    }
     };
 
     const toggleForm = () => {
