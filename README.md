@@ -162,45 +162,9 @@ npm start
 
 ---
 
-## 📊 Database Schema
+  Check Out The Work Here :
+  https://www.behance.net/gallery/227598711/Store-Management-System
 
-### Users Table
-```sql
-CREATE TABLE users (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  address TEXT,
-  role ENUM('admin', 'user', 'store_owner') DEFAULT 'user'
-);
-```
-
-### Stores Table
-```sql
-CREATE TABLE stores (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
-  address TEXT,
-  owner_id INT,
-  average_rating DECIMAL(2,1) DEFAULT 0,
-  FOREIGN KEY (owner_id) REFERENCES users(id)
-);
-```
-
-### Ratings Table
-```sql
-CREATE TABLE ratings (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  user_id INT,
-  store_id INT,
-  rating INT CHECK (rating >= 1 AND rating <= 5),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (store_id) REFERENCES stores(id)
-);
-```
 
 ---
 
